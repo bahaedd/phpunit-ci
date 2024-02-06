@@ -23,3 +23,26 @@ blocks:
         machine:
           type: e1-standard-2
           os_image: ubuntu2004
+  - name: Test
+    task:
+      env_vars:
+        - name: APP_ENV
+          value: local
+      prologue:
+        commands:
+          - sem-version php 8.1.10
+          - checkout
+          - cache restore
+          - cp .env.example .env
+          - 'php artisan key:generate'
+          - mkdir -p database
+          - touch database/database.sqlite
+      jobs:
+        - name: phpunit
+          commands:
+            - ./vendor/bin/phpunit
+        - name: dusk
+          commands:
+            - 'php artisan dusk:chrome-driver 114'
+            - php artisan serve --env=.env.dusk.local --port=8010 &
+            - php artisan dusk
