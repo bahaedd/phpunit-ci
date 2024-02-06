@@ -10,15 +10,12 @@ blocks:
       jobs:
         - name: Test
           commands:
+            - sem-version php 8.1.10
             - checkout
             - cache restore
             - composer install
+            - npm install
             - cache store
-            - cp .env.example .env
-            - 'php artisan key:generate'
-            - mkdir -p database
-            - touch database/database.sqlite
-            - ./vendor/bin/phpunit
       env_vars:
         - name: APP_ENV
           value: local
